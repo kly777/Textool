@@ -86,17 +86,36 @@ func (tp *TextProcessor) generateMD(prompt string) (string, error) {
 	return response, nil
 }
 
-// postProcess 后处理Markdown内容
-// 合并处理结果
+// joinResults 将多个result对象的md字段合并为一个字符串。
+// 参数:
+//
+//	results ([]result) - 包含多个result对象的切片，每个result对象应包含md字段
+//
+// 返回值:
+//
+//	string - 所有result对象的md字段按顺序拼接，每段之间用两个换行符分隔
 func joinResults(results []result) string {
+	// 收集所有result对象的md字段到output切片
 	var output []string
 	for _, res := range results {
 		output = append(output, res.md)
 	}
+
+	// 使用双换行符将各md字段拼接为单个字符串返回
 	return strings.Join(output, "\n\n")
 }
 
-func (tp *TextProcessor) postProcess(mdText string) string {
+// TextProcessor的postProcess方法用于规范化Markdown文本中的换行符。
+// 将连续三个及以上换行符替换为标准的两个换行符，确保输出格式一致性。
+//
+// 参数:
+//
+//	mdText string - 需要处理的原始Markdown文本
+//
+// 返回值:
+//
+//	string - 处理后的规范化文本，其中连续换行被压缩为双换行
+func postProcess(mdText string) string {
 	re := regexp.MustCompile(`\n{3,}`)
 	return re.ReplaceAllString(mdText, "\n\n")
 }

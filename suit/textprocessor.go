@@ -66,13 +66,13 @@ func (tp *TextProcessor) ProcessFile(inputPath, outputPath string) {
 	fullText := readFile(inputPath)
 	log.Println("开始处理文件：", inputPath)
 
-	chunks := tp.splitText(fullText)
+	chunks := splitText(fullText, tp.chunkSize)
 	log.Println("已分块：", len(chunks))
 
 	results := tp.parallelProcessing(chunks)
 	log.Println("已处理：", len(results))
 
-	finalMD := tp.postProcess(joinResults(results))
+	finalMD := postProcess(joinResults(results))
 	log.Println("已生成结果：", outputPath)
 
 	writeFile(outputPath, finalMD)

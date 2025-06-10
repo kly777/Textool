@@ -9,10 +9,10 @@ import (
 )
 
 type headingInfo struct {
-	level    int
-	title    string
-	dirPath  string
-	content  []string
+	level   int
+	title   string
+	dirPath string
+	content []string
 }
 
 func sanitizeFilename(name string) string {
@@ -86,10 +86,10 @@ func processLine(line string, stack *[]headingInfo, outputDir string) error {
 
 		// 压入堆栈
 		*stack = append(*stack, headingInfo{
-			level:    level,
-			title:    title,
-			dirPath:  currentDir,
-			content:  []string{line},
+			level:   level,
+			title:   title,
+			dirPath: currentDir,
+			content: []string{line},
 		})
 	} else {
 		if len(*stack) > 0 {

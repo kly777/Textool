@@ -2,11 +2,10 @@ package suit
 
 import (
 	"os"
-	"io/ioutil"
 )
 
 func readFile(path string) string {
-	data, err := ioutil.ReadFile(path)
+	data, err := os.ReadFile(path)
 	if err != nil {
 		panic(err)
 	}
@@ -14,7 +13,7 @@ func readFile(path string) string {
 }
 
 func writeFile(path, content string) {
-	err := ioutil.WriteFile(path, []byte(content), 0644)
+	err := os.WriteFile(path, []byte(content), 0644)
 	if err != nil {
 		panic(err)
 	}
