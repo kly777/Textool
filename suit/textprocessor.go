@@ -2,7 +2,6 @@ package suit
 
 import (
 	"log"
-	"os"
 	"runtime"
 )
 
@@ -52,7 +51,6 @@ func NewTextProcessor(apiKey string, chunkSize, overlap, maxWorkers int) *TextPr
 		maxWorkers = DefaultMaxWorkers
 	}
 
-	os.Mkdir(".chunk_cache", 0755)
 	return &TextProcessor{
 		apiKey:     apiKey,
 		chunkSize:  chunkSize,

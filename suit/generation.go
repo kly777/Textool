@@ -75,7 +75,7 @@ func (tp *TextProcessor) generateMD(prompt string) (string, error) {
 				openai.UserMessage(prompt),
 			},
 
-			Model: "qwen-long",
+			Model: "qwen-turbo",
 		},
 	)
 	if err != nil {

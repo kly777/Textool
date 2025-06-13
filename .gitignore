@@ -3,3 +3,8 @@
 config.json
 
  */
+
+*.exe
+*.txt
+*.md
+*.htm
