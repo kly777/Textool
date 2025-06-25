@@ -9,6 +9,7 @@ import (
 	"textool/internal/config"
 	"textool/internal/divider"
 	"textool/internal/suit"
+	"textool/pkg/translate"
 )
 
 func main() {
@@ -17,6 +18,7 @@ func main() {
 	combineCmd := flag.NewFlagSet("combine", flag.ExitOnError)
 	processCmd := flag.NewFlagSet("process", flag.ExitOnError)
 	configCmd := flag.NewFlagSet("config", flag.ExitOnError)
+	translateCmd := flag.NewFlagSet("translate", flag.ExitOnError)
 
 	// 验证参数
 	if len(os.Args) < 2 {
@@ -95,6 +97,33 @@ func main() {
 		tp.ProcessFile(*inputPath, *outputPath)
 		fmt.Println("处理完成")
 
+	case "translate":
+		inputPath := translateCmd.String("i", "", "输入文件路径")
+		outputPath := translateCmd.String("o", "", "输出文件路径")
+		if err := translateCmd.Parse(os.Args[2:]); err != nil {
+			fmt.Printf("参数解析失败: %v\n", err)
+			os.Exit(1)
+		}
+
+		if *inputPath == "" || *outputPath == "" {
+			fmt.Println("错误: 必须提供输入和输出文件路径")
+			translateCmd.Usage()
+			os.Exit(1)
+		}
+
+		cfg, err := config.GetConfig()
+		if err != nil {
+			fmt.Printf("获取配置失败: %v\n", err)
+			os.Exit(1)
+		}
+
+		translator := translate.NewTranslator(cfg.Ds_api_key)
+		if err := translator.ProcessFile(*inputPath, *outputPath); err != nil {
+			fmt.Printf("翻译失败: %v\n", err)
+			os.Exit(1)
+		}
+		fmt.Println("翻译完成")
+
 	case "config":
 		if err := configCmd.Parse(os.Args[2:]); err != nil {
 			fmt.Printf("参数解析失败: %v\n", err)
@@ -109,7 +138,7 @@ func main() {
 
 	default:
 		fmt.Println("未知命令:", os.Args[1])
-		fmt.Println("可用命令: divide, combine, process, config")
+		fmt.Println("可用命令: divide, combine, process, translate, config")
 		os.Exit(1)
 	}
 }
