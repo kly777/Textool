@@ -41,7 +41,7 @@ func (tp *TextProcessor) parallelProcessing(chunks []string) []result {
 
 	var wg sync.WaitGroup
 	results := make(chan result, len(chunks))
-	workQueue := make(chan int, tp.maxWorkers)
+	taskQueue := make(chan int, tp.maxWorkers)
 
 	/*
 		启动固定数量的worker协程池
@@ -49,7 +49,7 @@ func (tp *TextProcessor) parallelProcessing(chunks []string) []result {
 		处理完成后通过results通道返回结果
 	*/
 	for range tp.maxWorkers {
-		go tp.worker(chunks, results, &wg, workQueue, &progress)
+		go tp.worker(chunks, results, &wg, taskQueue, &progress)
 	}
 
 	/*
@@ -60,9 +60,9 @@ func (tp *TextProcessor) parallelProcessing(chunks []string) []result {
 	*/
 	for i := range chunks {
 		wg.Add(1)
-		workQueue <- i
+		taskQueue <- i
 	}
-	close(workQueue)
+	close(taskQueue)
 	wg.Wait()
 	close(results)
 

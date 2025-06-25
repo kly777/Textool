@@ -1,4 +1,4 @@
-package div
+package divider
 
 import (
 	"fmt"
@@ -20,7 +20,7 @@ func sanitizeFilename(name string) string {
 	return reg.ReplaceAllString(name, "_")
 }
 
-func processMDFile(inputFile, outputDir string) error {
+func DivideMDFile(inputFile, outputDir string) error {
 	data, err := readFile(inputFile)
 	if err != nil {
 		return fmt.Errorf("读取文件失败: %v", err)
@@ -112,11 +112,4 @@ func writeHeadingFile(h headingInfo) error {
 		return fmt.Errorf("写入文件失败: %v", err)
 	}
 	return nil
-}
-
-func main() {
-	if err := processMDFile("formalOntology.md", "dived"); err != nil {
-		fmt.Printf("处理失败: %v\n", err)
-		os.Exit(1)
-	}
 }

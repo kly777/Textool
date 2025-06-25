@@ -24,6 +24,8 @@ func writeFile(path, content string) {
 
 func ensureDir(dir string) {
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
-		os.MkdirAll(dir,0755)
+		if err := os.MkdirAll(dir, 0755); err != nil {
+			panic(err)
+		}
 	}
 }
