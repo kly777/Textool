@@ -81,10 +81,16 @@ func main() {
 			os.Exit(1)
 		}
 
-		if *inputPath == "" || *outputPath == "" {
-			fmt.Println("错误: 必须提供输入和输出文件路径")
-			processCmd.Usage()
-			os.Exit(1)
+		if *inputPath == "" {
+			if *inputPath = os.Args[2]; *inputPath == "" {
+				fmt.Println("错误: 必须提供输入文件路径")
+				processCmd.Usage()
+				os.Exit(1)
+			}
+		}
+		if *outputPath == "" {
+			*outputPath = *inputPath + ".md"
+			fmt.Println("未指定输出文件路径，将输出到 ", *outputPath)
 		}
 
 		cfg, err := config.GetConfig()
@@ -93,7 +99,7 @@ func main() {
 			os.Exit(1)
 		}
 
-		tp := suit.NewTextProcessor(cfg.Bl_api_key, 10000, 50000, 0)
+		tp := suit.NewTextProcessor(cfg.Bl_api_key, 10000, 20000, 0)
 		tp.ProcessFile(*inputPath, *outputPath)
 		fmt.Println("处理完成")
 
@@ -139,6 +145,7 @@ func main() {
 	default:
 		fmt.Println("未知命令:", os.Args[1])
 		fmt.Println("可用命令: divide, combine, process, translate, config")
+		fmt.Println("使用 'textool [command] -help' 查看具体命令的帮助")
 		os.Exit(1)
 	}
 }

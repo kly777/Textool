@@ -37,7 +37,7 @@ func (tp *TextProcessor) processChunk(index int, chunk, context string) (string,
 	startTime := time.Now()
 	log.Println("开始处理文本块", "index", index, "chunk_length", len(chunk))
 
-	var mdContent string
+	var mdContent string = ""
 	for attempt := range 3 {
 		log.Println("API调用尝试", "attempt", attempt+1)
 
@@ -79,7 +79,7 @@ func (tp *TextProcessor) generateMD(prompt string) (string, error) {
 		},
 	)
 	if err != nil {
-		panic(err.Error())
+		return "", err
 	}
 
 	response := chatCompletion.Choices[0].Message.Content
