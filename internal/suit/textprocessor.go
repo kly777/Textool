@@ -3,6 +3,7 @@ package suit
 import (
 	"log"
 	"runtime"
+	"textool/pkg/fileutil"
 )
 
 const (
@@ -61,7 +62,7 @@ func NewTextProcessor(apiKey string, chunkSize, overlap, maxWorkers int) *TextPr
 
 // ProcessFile 处理文件的主入口
 func (tp *TextProcessor) ProcessFile(inputPath, outputPath string) {
-	fullText := readFile(inputPath)
+	fullText := fileutil.ReadFile(inputPath)
 	log.Println("开始处理文件：", inputPath)
 
 	chunks := splitText(fullText, tp.chunkSize)
@@ -73,6 +74,6 @@ func (tp *TextProcessor) ProcessFile(inputPath, outputPath string) {
 	finalMD := postProcess(joinResults(results))
 	log.Println("已生成结果：", outputPath)
 
-	writeFile(outputPath, finalMD)
+	fileutil.WriteFile(outputPath, finalMD)
 	log.Println("处理完成")
 }

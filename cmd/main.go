@@ -9,7 +9,7 @@ import (
 	"textool/internal/config"
 	"textool/internal/divider"
 	"textool/internal/suit"
-	"textool/pkg/translate"
+	"textool/internal/translate"
 )
 
 func main() {

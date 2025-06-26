@@ -55,13 +55,50 @@ func NewTranslator(apiKey string) *Translator {
 	return &Translator{client: &client}
 }
 
+func makeChunks(lines []string, maxChars int) []string {
+	var chunks []string
+	currentChunk := ""
+
+	for _, line := range lines {
+		lineWithSep := line + "\n"
+
+		// 单行超限特殊处理
+		if len(lineWithSep) > maxChars {
+			chunks = append(chunks, lineWithSep[:maxChars])
+			remaining := lineWithSep[maxChars:]
+
+			for len(remaining) > 0 {
+				chunkLen := min(len(remaining), maxChars)
+				chunks = append(chunks, remaining[:chunkLen])
+				remaining = remaining[chunkLen:]
+			}
+			continue
+		}
+
+		// 普通分块逻辑
+		if len(currentChunk)+len(lineWithSep) > maxChars {
+			chunks = append(chunks, currentChunk)
+			currentChunk = lineWithSep
+		} else {
+			currentChunk += lineWithSep
+		}
+	}
+
+	if currentChunk != "" {
+		chunks = append(chunks, currentChunk)
+	}
+
+	return chunks
+}
+
 func (t *Translator) ProcessFile(inputPath, outputPath string) error {
 	lines, err := readFileLines(inputPath)
 	if err != nil {
 		return fmt.Errorf("读取文件失败: %w", err)
 	}
+	chunks := makeChunks(lines, 8192)
 
-	results := make([]string, len(lines))
+	results := make([]string, len(chunks))
 	var wg sync.WaitGroup
 	var processed int64                            // 进度计数器
 	sem := make(chan struct{}, runtime.NumCPU()*2) // 并发控制
@@ -85,7 +122,7 @@ func (t *Translator) ProcessFile(inputPath, outputPath string) error {
 		}
 	}()
 
-	for i, line := range lines {
+	for i, line := range chunks {
 		if strings.TrimSpace(line) == "" {
 			results[i] = ""
 			continue
@@ -102,7 +139,7 @@ func (t *Translator) ProcessFile(inputPath, outputPath string) error {
 				<-sem
 			}()
 
-			result, err := t.translateLine(line, idx, lines)
+			result, err := t.translateLine(line, idx, chunks)
 			if err != nil {
 				log.Printf("行 %d 翻译失败: %v", idx, err)
 				results[idx] = fmt.Sprintf("【失败】%s", line)
