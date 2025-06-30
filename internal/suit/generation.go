@@ -14,7 +14,7 @@ import (
 )
 
 // processChunk 处理单个文本块
-func (tp *TextProcessor) processChunk(index int, chunk, context string) (string, string) {
+func (tp *MdiftConfig) processChunk(index int, chunk, context string) (string, string) {
 	prompt := fmt.Sprintf(`请严格按照以下规范将文本转换为结构化Markdown：
 【核心原则】
 1. 原始内容完整保留：不得翻译、删减或改写任何内容
@@ -37,7 +37,7 @@ func (tp *TextProcessor) processChunk(index int, chunk, context string) (string,
 	startTime := time.Now()
 	log.Println("开始处理文本块", "index", index, "chunk_length", len(chunk))
 
-	var mdContent string = ""
+	var mdContent string
 	for attempt := range 3 {
 		log.Println("API调用尝试", "attempt", attempt+1)
 
@@ -63,7 +63,7 @@ func (tp *TextProcessor) processChunk(index int, chunk, context string) (string,
 }
 
 // generateMD 调用API生成Markdown
-func (tp *TextProcessor) generateMD(prompt string) (string, error) {
+func (tp *MdiftConfig) generateMD(prompt string) (string, error) {
 	client := openai.NewClient(
 		option.WithAPIKey(tp.apiKey),
 		option.WithBaseURL("https://dashscope.aliyuncs.com/compatible-mode/v1/"),

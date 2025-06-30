@@ -16,7 +16,7 @@ func main() {
 	// 定义子命令
 	divideCmd := flag.NewFlagSet("divide", flag.ExitOnError)
 	combineCmd := flag.NewFlagSet("combine", flag.ExitOnError)
-	processCmd := flag.NewFlagSet("process", flag.ExitOnError)
+	mdifyCmd := flag.NewFlagSet("mdify", flag.ExitOnError)
 	configCmd := flag.NewFlagSet("config", flag.ExitOnError)
 	translateCmd := flag.NewFlagSet("translate", flag.ExitOnError)
 
@@ -73,10 +73,10 @@ func main() {
 		combine.Combine(*rootPath, *outputPath, excludeP, excludeS)
 		fmt.Println("合并完成")
 
-	case "process":
-		inputPath := processCmd.String("i", "", "输入文件路径")
-		outputPath := processCmd.String("o", "", "输出文件路径")
-		if err := processCmd.Parse(os.Args[2:]); err != nil {
+	case "mdify":
+		inputPath := mdifyCmd.String("i", "", "输入文件路径")
+		outputPath := mdifyCmd.String("o", "", "输出文件路径")
+		if err := mdifyCmd.Parse(os.Args[2:]); err != nil {
 			fmt.Printf("参数解析失败: %v\n", err)
 			os.Exit(1)
 		}
@@ -84,7 +84,7 @@ func main() {
 		if *inputPath == "" {
 			if *inputPath = os.Args[2]; *inputPath == "" {
 				fmt.Println("错误: 必须提供输入文件路径")
-				processCmd.Usage()
+				mdifyCmd.Usage()
 				os.Exit(1)
 			}
 		}
@@ -99,7 +99,7 @@ func main() {
 			os.Exit(1)
 		}
 
-		tp := suit.NewTextProcessor(cfg.Bl_api_key, 10000, 20000, 0)
+		tp := suit.NewMdiftConfig(cfg.Bl_api_key, 10000, 20000, 0)
 		tp.ProcessFile(*inputPath, *outputPath)
 		fmt.Println("处理完成")
 

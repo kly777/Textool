@@ -27,7 +27,7 @@ parallelProcessing 并行处理文本分块并按顺序返回结果
 3. 收集所有worker返回的结果
 4. 使用优先队列对结果进行排序
 */
-func (tp *TextProcessor) parallelProcessing(chunks []string) []result {
+func (tp *MdiftConfig) parallelProcessing(chunks []string) []result {
 	totalTasks := len(chunks)
 	var progress atomic.Int64
 	progress.Store(0)
@@ -95,7 +95,7 @@ func (tp *TextProcessor) parallelProcessing(chunks []string) []result {
 // 该方法通过循环处理分配给它的文本块索引，处理完成后：
 // 1. 通过results通道发送结果
 // 2. 调用wg.Done()通知任务完成
-func (tp *TextProcessor) worker(chunks []string, results chan<- result, wg *sync.WaitGroup, queue <-chan int, progress *atomic.Int64) {
+func (tp *MdiftConfig) worker(chunks []string, results chan<- result, wg *sync.WaitGroup, queue <-chan int, progress *atomic.Int64) {
 	// 从任务队列接收索引并处理：
 	// - 获取上下文信息
 	// - 处理文本块生成markdown和摘要

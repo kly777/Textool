@@ -18,7 +18,12 @@ func Combine(rootPath, outputPath string, excludePrefixes, excludeSuffixes []str
 	if err != nil {
 		panic(err)
 	}
-	defer file.Close()
+	defer func() {
+		err = file.Close()
+		if err != nil {
+			panic(err)
+		}
+	}()
 
 	results := []string{}
 	num := 0

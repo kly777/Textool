@@ -104,7 +104,7 @@ func (t *Translator) ProcessFile(inputPath, outputPath string) error {
 	sem := make(chan struct{}, runtime.NumCPU()*2) // 并发控制
 
 	// 启动进度监控goroutine
-	var num int = 0
+	var num int
 	go func() {
 		ticker := time.NewTicker(500 * time.Millisecond)
 		defer ticker.Stop()
@@ -193,7 +193,7 @@ func (t *Translator) translateLine(line string, idx int, allLines []string) (str
 
 		fullContent := processor.getContent()
 		if fullContent != "" {
-			return line + "\n" + fullContent, nil
+			return fullContent, nil
 		}
 
 		time.Sleep(retryDelays[attempt] * time.Second)
@@ -207,7 +207,12 @@ func readFileLines(path string) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer file.Close()
+	defer func() {
+		err = file.Close()
+		if err != nil {
+			panic(err)
+		}
+	}()
 
 	var lines []string
 	scanner := bufio.NewScanner(file)
@@ -222,7 +227,12 @@ func writeFile(path string, lines []string) error {
 	if err != nil {
 		return err
 	}
-	defer file.Close()
+	defer func() {
+		err = file.Close()
+		if err != nil {
+			panic(err)
+		}
+	}()
 
 	for _, line := range lines {
 		if _, err := file.WriteString(line + "\n"); err != nil {
